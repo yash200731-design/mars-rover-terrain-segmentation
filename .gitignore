@@ -1,0 +1,38 @@
+# NASA JPL AI4Mars Project .gitignore
+
+# Large Local Datasets (Do NOT push multi-gigabyte datasets to Git/Vercel)
+ai4mars-dataset-merged-0.6/
+*.zip
+*.tar.gz
+*.tar
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Checkpoints & Weights (Use Git LFS or external release if pushing models >100MB)
+checkpoints/
+checkpoints_test/
+evaluation_test/
+*.pt
+*.pth
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Vercel Build Artifacts
+.vercel/

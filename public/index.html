@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARS ROVER TERRAIN SEGMENTATION | AI Surface Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stars-bg"></div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="mars-symbol">🪐</span>
+        <div>
+          <h1 class="main-title">MARS ROVER TERRAIN SEGMENTATION</h1>
+          <p class="sub-title">AI-POWERED MARTIAN SURFACE ANALYSIS &bull; NASA JPL AI4MARS BENCHMARK</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-nasa">NASA JPL AI4MARS</span>
+        <span class="badge badge-curiosity">CURIOSITY MASTCAM</span>
+        <span class="badge badge-vercel">VERCEL DEPLOYED</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Controls & Ingestion Section -->
+    <section class="control-panel hud-card">
+      <div class="panel-header">
+        <h2><span class="hud-indicator"></span> TELEMETRY INGESTION & MISSION CONTROLS</h2>
+      </div>
+      <div class="control-grid">
+        <div class="control-group">
+          <label for="preset-select">Select Built-In Curiosity MastCam Preset:</label>
+          <select id="preset-select" class="form-input">
+            <option value="preset1">Sol 1150 MastCam — Dune & Bedrock Outcrop</option>
+            <option value="preset2">Sol 1151 MastCam — Rocky Scarp & Regolith</option>
+            <option value="preset3">Sol 1152 MastCam — High-Traversability Plain</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="image-upload">Or Upload Custom Martian Image:</label>
+          <div class="file-dropzone" id="dropzone">
+            <input type="file" id="image-upload" accept="image/jpeg,image/png" />
+            <span class="dropzone-text" id="dropzone-label">📁 Drag & drop or click to upload (JPG/PNG)</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="slider-header">
+            <label for="alpha-slider">Hazard Overlay Opacity (Alpha):</label>
+            <span id="alpha-val" class="slider-val">55%</span>
+          </div>
+          <input type="range" id="alpha-slider" min="10" max="90" value="55" class="slider" />
+        </div>
+
+        <div class="control-group btn-group">
+          <button id="analyze-btn" class="glow-btn">
+            <span class="btn-icon">⚡</span> RUN TERRAIN SEGMENTATION
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Class Legend -->
+    <section class="legend-bar hud-card">
+      <div class="legend-title">TERRAIN CLASSIFICATION KEY:</div>
+      <div class="legend-items">
+        <div class="legend-item"><span class="chip chip-soil"></span> <strong>SOIL (0)</strong> — Fine regolith, safe path</div>
+        <div class="legend-item"><span class="chip chip-bedrock"></span> <strong>BEDROCK (1)</strong> — Solid rock, high traction</div>
+        <div class="legend-item"><span class="chip chip-sand"></span> <strong>SAND (2)</strong> — Ripples/dunes, slippage hazard</div>
+        <div class="legend-item"><span class="chip chip-rock"></span> <strong>BIG ROCK (3)</strong> — Boulders, collision risk</div>
+      </div>
+    </section>
+
+    <!-- Multi-View Comparison Display -->
+    <section class="telemetry-views">
+      <div class="view-card hud-card">
+        <div class="view-header">
+          <span class="view-num">01</span>
+          <h3>RAW MARS ROVER IMAGE</h3>
+        </div>
+        <div class="view-viewport">
+          <img id="view-raw" src="" alt="Raw Mars Rover Image" />
+          <div class="scanline"></div>
+        </div>
+      </div>
+
+      <div class="view-card hud-card">
+        <div class="view-header">
+          <span class="view-num">02</span>
+          <h3>PREDICTED SEGMENTATION MASK</h3>
+        </div>
+        <div class="view-viewport">
+          <img id="view-mask" src="" alt="Predicted Segmentation Mask" />
+        </div>
+      </div>
+
+      <div class="view-card hud-card">
+        <div class="view-header">
+          <span class="view-num">03</span>
+          <h3>TERRAIN HAZARD OVERLAY</h3>
+        </div>
+        <div class="view-viewport">
+          <img id="view-overlay" src="" alt="Terrain Hazard Overlay" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Composition & Traversability HUD -->
+    <section class="analytics-grid">
+      <!-- Surface Distribution Breakdown -->
+      <div class="hud-card stats-panel">
+        <div class="panel-header">
+          <h2><span class="hud-indicator"></span> SURFACE COMPOSITION BREAKDOWN</h2>
+        </div>
+        <div class="class-metrics-grid">
+          <div class="metric-card card-soil">
+            <span class="metric-label">SOIL (REGOLITH)</span>
+            <span class="metric-value" id="pct-soil">0.0%</span>
+            <div class="progress-bar"><div class="progress-fill fill-soil" id="bar-soil"></div></div>
+            <span class="metric-desc">Low hazard, nominal traction</span>
+          </div>
+
+          <div class="metric-card card-bedrock">
+            <span class="metric-label">SOLID BEDROCK</span>
+            <span class="metric-value" id="pct-bedrock">0.0%</span>
+            <div class="progress-bar"><div class="progress-fill fill-bedrock" id="bar-bedrock"></div></div>
+            <span class="metric-desc">Firm wheel grip, zero sinkage</span>
+          </div>
+
+          <div class="metric-card card-sand">
+            <span class="metric-label">LOOSE SAND DUNES</span>
+            <span class="metric-value" id="pct-sand">0.0%</span>
+            <div class="progress-bar"><div class="progress-fill fill-sand" id="bar-sand"></div></div>
+            <span class="metric-desc">Critical slippage & entrapment risk</span>
+          </div>
+
+          <div class="metric-card card-rock">
+            <span class="metric-label">BOULDERS & BIG ROCKS</span>
+            <span class="metric-value" id="pct-rock">0.0%</span>
+            <div class="progress-bar"><div class="progress-fill fill-rock" id="bar-rock"></div></div>
+            <span class="metric-desc">Undercarriage collision obstacle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Traversability Advisory HUD -->
+      <div class="hud-card advisory-panel">
+        <div class="panel-header">
+          <h2><span class="hud-indicator"></span> AUTONOMY & TRAVERSABILITY ADVISORY</h2>
+        </div>
+        <div class="advisory-content">
+          <div class="status-badge" id="advisory-badge">ANALYSIS READY</div>
+          <h3 id="advisory-title">Surface Telemetry Evaluated</h3>
+          <p id="advisory-message">Select a sample preset or upload a Martian rover photograph and press "RUN TERRAIN SEGMENTATION" to generate real-time segmentation and traversability guidance.</p>
+          <div class="tech-spec">
+            <span>Model: <strong>ResNet-34 U-Net</strong></span> &bull; 
+            <span>Resolution: <strong>256 × 256</strong></span> &bull; 
+            <span>Host: <strong>Vercel Edge</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Planetary Robotics Safety Disclaimer -->
+    <footer class="disclaimer-panel">
+      <div class="disclaimer-icon">⚠️</div>
+      <div class="disclaimer-text">
+        <strong>CRITICAL PLANETARY ROBOTICS &amp; FLIGHT SAFETY DISCLAIMER:</strong><br>
+        This deep learning semantic segmentation model serves as an informative 2D visual classification tool. 
+        <strong>Semantic segmentation alone does NOT guarantee planetary rover safety.</strong> Flight-proven rover navigation 
+        systems (such as NASA's AutoNav on Curiosity and Perseverance) require multi-modal sensor fusion incorporating 
+        dense 3D stereo point clouds, Digital Elevation Models (DEMs), rover ground clearance geometry (~0.6m), localized surface 
+        slope angles (&lt;30° limits), and real-time visual odometry wheel sinkage telemetry.
+      </div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
