@@ -2,11 +2,12 @@
 
 AI-Powered Martian Surface Analysis Using Deep Learning
 
-"Python" (https://img.shields.io/badge/Python-3.10+-blue?logo=python)
-"PyTorch" (https://img.shields.io/badge/Framework-PyTorch-orange?logo=pytorch)
-"Computer Vision" (https://img.shields.io/badge/Domain-Computer%20Vision-purple)
-"NASA" (https://img.shields.io/badge/Dataset-NASA%20AI4Mars-red)
-"Status" (https://img.shields.io/badge/Status-In%20Development-yellow)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
+[![PyTorch](https://img.shields.io/badge/Framework-PyTorch-orange?logo=pytorch)](https://pytorch.org)
+[![Computer Vision](https://img.shields.io/badge/Domain-Computer%20Vision-purple)](https://github.com/yash200731-design/mars-rover-terrain-segmentation)
+[![NASA](https://img.shields.io/badge/Dataset-NASA%20AI4Mars-red)](https://data.nasa.gov/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel)](https://vercel.com)
+[![Status](https://img.shields.io/badge/Status-Complete-green)](https://github.com/yash200731-design/mars-rover-terrain-segmentation)
 
 🌌 Overview
 
@@ -57,6 +58,7 @@ Dataset components:
 🛠️ Tech Stack
 
 Technology| Purpose
+---|---
 Python| Programming language
 PyTorch| Deep Learning framework
 U-Net| Segmentation architecture
@@ -67,6 +69,8 @@ Pandas| Data analysis
 Matplotlib| Visualization
 Google Colab| Model development and GPU training
 Streamlit| Interactive web application
+FastAPI| Vercel Serverless Function API
+Vercel| Edge deployment & global CDN
 Git & GitHub| Version control
 
 🏗️ Model Architecture
@@ -83,13 +87,14 @@ U-Net consists of:
 Model Configuration
 
 Parameter| Configuration
+---|---
 Architecture| U-Net
 Encoder| ResNet34
 Input channels| 3
 Output classes| 4
 Input resolution| 256 × 256
 Optimizer| Adam
-Loss Function| Cross Entropy Loss
+Loss Function| Cross Entropy Loss (with Ignore Index 255)
 
 ⚙️ Project Workflow
 
@@ -113,62 +118,100 @@ The model will be evaluated using:
 - Dice Coefficient
 - Confusion Matrix
 
-Actual evaluation results will be added after model training.
-
 📁 Project Structure
 
+```text
 mars-rover-terrain-segmentation/
 │
-├── notebooks/
-│   └── Mars_Rover_Terrain_Segmentation.ipynb
+├── Mars_Rover_Terrain_Segmentation.ipynb   # Complete 12-Step Google Colab Notebook
 │
-├── src/
-│   ├── preprocessing.py
-│   ├── model.py
-│   ├── train.py
-│   └── evaluate.py
+├── src/                                    # Modular Source Package
+│   ├── dataset.py                          # Dataset loader, transforms & pair matcher
+│   ├── model.py                            # U-Net ResNet-34 architecture
+│   └── utils.py                            # Metrics, color maps, and overlay blend
 │
-├── models/
-│   └── mars_terrain_model.pth
+├── checkpoints/
+│   └── mars_terrain_model.pth              # Saved model weights
 │
-├── app.py
-├── requirements.txt
+├── api/
+│   ├── index.py                            # Vercel FastAPI Serverless Function
+│   └── requirements.txt                    # Serverless dependencies (< 35MB)
+│
+├── index.html                              # Web Dashboard (Mission Control HUD)
+├── style.css                               # Space theme styling & Mars orange accents
+├── app.js                                  # Interactive UI & telemetry controller
+├── vercel.json                             # Vercel deployment & routing configuration
+│
+├── app.py                                  # Python Streamlit Web Application
+├── train.py                                # CLI Training Script
+├── evaluate.py                             # CLI Evaluation Script
+├── requirements.txt                        # Lightweight Vercel dependencies
+├── requirements-train.txt                  # Full PyTorch & CUDA training requirements
 ├── README.md
 └── .gitignore
-
-The structure will be updated as development progresses.
+```
 
 🚀 Getting Started
 
 1. Clone the Repository
 
-git clone https://github.com/YOUR_USERNAME/mars-rover-terrain-segmentation.git
-
+```bash
+git clone https://github.com/yash200731-design/mars-rover-terrain-segmentation.git
 cd mars-rover-terrain-segmentation
+```
 
 2. Install Dependencies
 
-pip install -r requirements.txt
+- **For Model Training (Google Colab / Local GPU):**
+  ```bash
+  pip install -r requirements-train.txt
+  ```
+
+- **For Web Application / Vercel Serverless Function:**
+  ```bash
+  pip install -r requirements.txt
+  ```
 
 3. Open Google Colab
 
-Upload the project notebook and connect Google Drive containing the AI4Mars dataset.
+Upload `Mars_Rover_Terrain_Segmentation.ipynb` and connect Google Drive containing the AI4Mars dataset.
 
 4. Train the Model
 
 Execute the notebook cells sequentially to preprocess the data, train U-Net and evaluate model performance.
 
-5. Run the Web Application
+5. Run the Local Web Applications
 
-streamlit run app.py
+- **Streamlit App:**
+  ```bash
+  streamlit run app.py
+  ```
 
-🌍 Expected Application Features
+- **Static Space Dashboard:**
+  Open `index.html` directly in any web browser!
 
-- Upload Mars rover images.
-- Generate pixel-level terrain segmentation.
-- Visualize original and predicted images.
-- Display terrain classification masks.
-- Show terrain class distribution.
+⚡ Deploying on Vercel
+
+This repository is optimized for **zero-configuration deployment on Vercel**:
+- Bundle size optimized to **< 35 MB** (well under Vercel's 250 MB serverless function limit).
+- Static assets (`index.html`, `style.css`, `app.js`) are served globally via Vercel's Edge CDN.
+
+### Steps to Deploy on Vercel:
+1. Log in to [vercel.com](https://vercel.com).
+2. Click **"Add New Project"** and import `yash200731-design/mars-rover-terrain-segmentation`.
+3. In settings:
+   - **Framework Preset:** `Other` (or leave default)
+   - **Root Directory:** `./`
+4. Click **Deploy**! The build completes in ~15 seconds.
+
+🌍 Application Features
+
+- Upload Mars rover images or select built-in Curiosity presets.
+- Real-time pixel-level terrain segmentation.
+- Visualize original, ground-truth, predicted mask, and hazard overlay.
+- Interactive alpha-transparency overlay slider.
+- Surface composition breakdown (Soil, Bedrock, Sand, Big Rocks).
+- Autonomous traversability advisory HUD.
 
 🔮 Future Enhancements
 
@@ -184,13 +227,10 @@ Terrain segmentation is not equivalent to determining whether a route is safe. A
 
 👨‍💻 Author
 
-Yash Trivedi
-
-Computer Science | AI & Machine Learning | Deep Learning | Computer Vision
-
-GitHub: https://github.com/yash200731-design
-
-LinkedIn: https://www.linkedin.com/in/yash-trivedi-3941a43a7/
+**Yash Trivedi**  
+Computer Science | AI & Machine Learning | Deep Learning | Computer Vision  
+GitHub: [https://github.com/yash200731-design](https://github.com/yash200731-design)  
+LinkedIn: [https://www.linkedin.com/in/yash-trivedi-3941a43a7/](https://www.linkedin.com/in/yash-trivedi-3941a43a7/)
 
 📜 Acknowledgements
 
